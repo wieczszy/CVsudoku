@@ -107,9 +107,18 @@ smooth_test = testim.copy()
 smooth_test = cv2.fastNlMeansDenoising(smooth_test, None, 40, 40)
 smooth_test = cv2.blur(smooth_test, (2,2))
 
-# TODO: localize digits in the image
-# maybe use NN instead of opencv
-# look here: https://towardsdatascience.com/build-a-multi-digit-detector-with-keras-and-opencv-b97e3cd3b37
+# cut image into 81 separate windows
+height, width = smooth_test.shape
+
+windowsize_r = height // 9
+windowsize_c = width // 9
+
+windows = []
+for r in range(0,smooth_test.shape[0] - windowsize_r, windowsize_r):
+    for c in range(0,smooth_test.shape[1] - windowsize_c, windowsize_c):
+        window = smooth_test[r:r+windowsize_r,c:c+windowsize_c]
+        windows.append(window)
 
 # test save
-cv2.imwrite('../dig_cnts.png', smooth_test)
+for i in range(len(windows)):
+    cv2.imwrite('../windows/window_{}.png'.format(i), windows[i])
