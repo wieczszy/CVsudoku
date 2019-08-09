@@ -4,7 +4,7 @@ import imutils
 from imutils import contours
 
 # load image, calculate the ratio and resize to 300px
-file_path = '../data/test.png'
+file_path = '../data/test4.jpg'
 
 img = cv2.imread(file_path)
 ratio = img.shape[0] / 300.0
@@ -73,10 +73,43 @@ warped_img = cv2.warpPerspective(orig, mapped_img, (max_width, max_heigth))
 
 # process the warped image
 warped_gray = cv2.cvtColor(warped_img, cv2.COLOR_RGB2GRAY)
-warped_denoised = cv2.fastNlMeansDenoising(warped_gray)
-warped_edges = cv2.Canny(warped_denoised,90,150,apertureSize = 3)
+# warped_denoised = cv2.fastNlMeansDenoising(warped_gray)
+# warped_edges = cv2.Canny(warped_denoised,90,150,apertureSize = 3)
+warped_gray = cv2.bitwise_not(warped_gray)
+warped_bw = cv2.adaptiveThreshold(warped_gray, 
+                                  255,
+                                  cv2.ADAPTIVE_THRESH_MEAN_C,
+                                  cv2.THRESH_BINARY,
+                                  15,
+                                  -2)
 
-# TODO next: remove gird lines from the image
+horizontal = warped_bw.copy()
+vertical = warped_bw.copy()
+
+# prepare the structure to remove horizontal lines
+cols = horizontal.shape[1]
+horizontal_size = cols // 10
+horizontal_structure = cv2.getStructuringElement(cv2.MORPH_RECT, (horizontal_size, 1))
+horizontal = cv2.erode(horizontal, horizontal_structure)
+horizontal = cv2.dilate(horizontal, horizontal_structure)
+
+# prepare the sturcture to remove vertical lines
+rows = vertical.shape[0]
+vertical_size = rows // 10
+vertical_structure = cv2.getStructuringElement(cv2.MORPH_RECT, (1, vertical_size))
+vertical = cv2.erode(vertical, vertical_structure)
+vertical = cv2.dilate(vertical, vertical_structure)
+
+testim = warped_bw - vertical
+testim = testim - horizontal
+
+smooth_test = testim.copy()
+smooth_test = cv2.fastNlMeansDenoising(smooth_test, None, 40, 40)
+smooth_test = cv2.blur(smooth_test, (2,2))
+
+# TODO: localize digits in the image
+# maybe use NN instead of opencv
+# look here: https://towardsdatascience.com/build-a-multi-digit-detector-with-keras-and-opencv-b97e3cd3b37
 
 # test save
-cv2.imwrite('../dig_cnts.png', warped_edges)
+cv2.imwrite('../dig_cnts.png', smooth_test)
