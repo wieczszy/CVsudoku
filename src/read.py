@@ -14,7 +14,7 @@ img = imutils.resize(img, height = 300)
 # transform the image
 gray = cv2.cvtColor(img, cv2.COLOR_RGB2GRAY)
 denoised = cv2.fastNlMeansDenoising(gray)
-edges = cv2.Canny(denoised,90,150,apertureSize = 3)
+edges = cv2.Canny(denoised, 90, 150, apertureSize = 3)
 
 # find the sudoku board in the image
 cnts = cv2.findContours(edges.copy(), cv2.RETR_TREE, cv2.CHAIN_APPROX_SIMPLE)
