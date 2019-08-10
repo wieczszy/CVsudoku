@@ -12,16 +12,16 @@ class ImageReader():
         return cv2.imread(file_path)
 
     def _preprocess_input(self, image):
-        image = imutils.resize(image, height = 300)
+        image = imutils.resize(image, height=300)
         gray = cv2.cvtColor(image, cv2.COLOR_RGB2GRAY)
         denoised = cv2.fastNlMeansDenoising(gray)
-        edges = cv2.Canny(denoised, 90, 150, apertureSize = 3)
+        edges = cv2.Canny(denoised, 90, 150, apertureSize=3)
         return edges
 
     def _find_board_contour(self, image):
         cnts = cv2.findContours(image.copy(), cv2.RETR_TREE, cv2.CHAIN_APPROX_SIMPLE)
         cnts = imutils.grab_contours(cnts)
-        cnts = sorted(cnts, key = cv2.contourArea, reverse = True)[:10]
+        cnts = sorted(cnts, key=cv2.contourArea, reverse=True)[:10]
         board_cnt = None
 
         for c in cnts:
@@ -37,8 +37,8 @@ class ImageReader():
         return image.shape[0] / 300.0
 
     def _calculate_board_coords(self, board_cnt, ratio):
-        pts = board_cnt.reshape(4,2)
-        rect = np.zeros((4,2), dtype="float32")
+        pts = board_cnt.reshape(4, 2)
+        rect = np.zeros((4, 2), dtype="float32")
         
         s = pts.sum(axis=1)
         rect[0] = pts[np.argmin(s)]
@@ -55,10 +55,10 @@ class ImageReader():
     def _extract_board(self, coords, input_image):
         tl, tr, bl, br = coords
 
-        width_top = np.sqrt((tl[0] - tr[0])**2 + (tl[1] - tr[1])**2)
-        width_bottom = np.sqrt((bl[0] - br[0])**2 + (bl[1] - br[1])**2)
-        height_left = np.sqrt((tl[0] - bl[0])**2 + (tl[1] - bl[1])**2)
-        heigth_right = np.sqrt((tr[0] - br[0])**2 + (tr[1] - br[1])**2)
+        width_top = np.sqrt((tl[0] - tr[0]) ** 2 + (tl[1] - tr[1]) ** 2)
+        width_bottom = np.sqrt((bl[0] - br[0]) ** 2 + (bl[1] - br[1]) ** 2)
+        height_left = np.sqrt((tl[0] - bl[0]) ** 2 + (tl[1] - bl[1]) ** 2)
+        heigth_right = np.sqrt((tr[0] - br[0]) ** 2 + (tr[1] - br[1]) ** 2)
         
         max_width = max(int(width_top), int(width_bottom))
         max_heigth = max(int(height_left), int(heigth_right))
@@ -68,7 +68,7 @@ class ImageReader():
             [max_width - 1, 0], 
             [max_width - 1, max_heigth - 1], 
             [0, max_heigth - 1]], 
-            dtype = "float32")
+            dtype="float32")
 
         mapped_img = cv2.getPerspectiveTransform(coords, mapping)
         warped_img = cv2.warpPerspective(input_image, mapped_img, (max_width, max_heigth))
@@ -103,7 +103,7 @@ class ImageReader():
         cleaned = cleaned - vertical
 
         cleaned = cv2.fastNlMeansDenoising(cleaned, None, 40, 40)
-        cleaned = cv2.blur(cleaned, (2,2))
+        cleaned = cv2.blur(cleaned, (2, 2))
 
         return cleaned
 
@@ -114,9 +114,10 @@ class ImageReader():
         windowsize_cols = width // 9
 
         cells = []
-        for r in range(0,image.shape[0] - windowsize_rows, windowsize_rows):
-            for c in range(0,image.shape[1] - windowsize_cols, windowsize_cols):
-                cell = image[r:r+windowsize_rows,c:c+windowsize_cols]
+        for r in range(0, image.shape[0] - windowsize_rows, windowsize_rows):
+            for c in range(0, image.shape[1] - windowsize_cols, windowsize_cols):
+                cell = image[r:r+windowsize_rows, c:c+windowsize_cols]
+                cell = cv2.resize(cell, (28,28), 1)
                 cells.append(cell)
 
         return cells
@@ -130,4 +131,5 @@ class ImageReader():
         board_image = self._extract_board(board_coords, input_image)
         board_clened = self._remove_grid(board_image)
         cells = self._split_to_cells(board_clened)
+        cells = np.array(cells)
         return cells
