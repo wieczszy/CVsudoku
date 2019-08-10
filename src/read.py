@@ -73,8 +73,6 @@ warped_img = cv2.warpPerspective(orig, mapped_img, (max_width, max_heigth))
 
 # process the warped image
 warped_gray = cv2.cvtColor(warped_img, cv2.COLOR_RGB2GRAY)
-# warped_denoised = cv2.fastNlMeansDenoising(warped_gray)
-# warped_edges = cv2.Canny(warped_denoised,90,150,apertureSize = 3)
 warped_gray = cv2.bitwise_not(warped_gray)
 warped_bw = cv2.adaptiveThreshold(warped_gray, 
                                   255,
