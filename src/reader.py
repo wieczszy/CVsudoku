@@ -32,26 +32,26 @@ class ImageReader():
                 break
 
         return board_cnt
-     
+
     def _get_image_ratio(self, image):
         return image.shape[0] / 300.0
 
     def _calculate_board_coords(self, board_cnt, ratio):
         pts = board_cnt.reshape(4, 2)
         rect = np.zeros((4, 2), dtype="float32")
-        
+
         s = pts.sum(axis=1)
         rect[0] = pts[np.argmin(s)]
         rect[2] = pts[np.argmax(s)]
-        
+
         diff = np.diff(pts, axis=1)
         rect[1] = pts[np.argmin(diff)]
         rect[3] = pts[np.argmax(diff)]
 
         rect *= ratio
-        
+
         return rect
-        
+
     def _extract_board(self, coords, input_image):
         tl, tr, bl, br = coords
 
@@ -59,22 +59,22 @@ class ImageReader():
         width_bottom = np.sqrt((bl[0] - br[0]) ** 2 + (bl[1] - br[1]) ** 2)
         height_left = np.sqrt((tl[0] - bl[0]) ** 2 + (tl[1] - bl[1]) ** 2)
         heigth_right = np.sqrt((tr[0] - br[0]) ** 2 + (tr[1] - br[1]) ** 2)
-        
+
         max_width = max(int(width_top), int(width_bottom))
         max_heigth = max(int(height_left), int(heigth_right))
 
         mapping = np.array([
-            [0,0], 
-            [max_width - 1, 0], 
-            [max_width - 1, max_heigth - 1], 
-            [0, max_heigth - 1]], 
+            [0,0],
+            [max_width - 1, 0],
+            [max_width - 1, max_heigth - 1],
+            [0, max_heigth - 1]],
             dtype="float32")
 
         mapped_img = cv2.getPerspectiveTransform(coords, mapping)
         warped_img = cv2.warpPerspective(input_image, mapped_img, (max_width, max_heigth))
         warped_gray = cv2.cvtColor(warped_img, cv2.COLOR_RGB2GRAY)
         warped_gray = cv2.bitwise_not(warped_gray)
-        warped_bw = cv2.adaptiveThreshold(warped_gray, 
+        warped_bw = cv2.adaptiveThreshold(warped_gray,
                                         255,
                                         cv2.ADAPTIVE_THRESH_MEAN_C,
                                         cv2.THRESH_BINARY,
