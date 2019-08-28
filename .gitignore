@@ -5,3 +5,4 @@ include/
 lib/
 *.pyc
 *.h5
+share/*
