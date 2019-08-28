@@ -86,9 +86,3 @@ class SudokuSolver():
     def solve(self, grid):
         print('\n\n SOLUTION \n\n')
         self.display(self.parse_grid(grid))
-
-
-# if __name__ == '__main__':
-#     grid1 = '003020600900305001001806400008102900700000008006708200002609500800203009005010300'
-#     s = SudokuSolver()
-#     s.solve(grid1)
