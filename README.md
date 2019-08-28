@@ -9,4 +9,6 @@ TODO:
 - [ ] Display solution as an image
 - [ ] Improve image processing
 - [ ] Improve digits classification
+- [ ] Add 'exe' file
 - [ ] Write README
+- [ ] Add LICENCE
