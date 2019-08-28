@@ -14,8 +14,8 @@ class ImageReader():
     def _preprocess_input(self, image):
         image = imutils.resize(image, height=300)
         gray = cv2.cvtColor(image, cv2.COLOR_RGB2GRAY)
-        denoised = cv2.fastNlMeansDenoising(gray)
-        edges = cv2.Canny(denoised, 90, 150, apertureSize=3)
+        gray = cv2.GaussianBlur(gray,(5,5),0)
+        edges = cv2.adaptiveThreshold(gray,255,1,1,11,2)
         return edges
 
     def _find_board_contour(self, image):
@@ -129,7 +129,7 @@ class ImageReader():
         original_ratio = self._get_image_ratio(input_image)
         board_coords = self._calculate_board_coords(board_contour, original_ratio)
         board_image = self._extract_board(board_coords, input_image)
-        board_clened = self._remove_grid(board_image)
-        cells = self._split_to_cells(board_clened)
+        board_cleaned = self._remove_grid(board_image)
+        cells = self._split_to_cells(board_cleaned)
         cells = np.array(cells)
         return cells
