@@ -5,5 +5,8 @@ TODO:
 - [x] Remove grid lines from the image
 - [x] Localize digits 
 - [x] Classify digits
-- [ ] Solve sudoku
-
+- [x] Solve sudoku
+- [ ] Display solution as an image
+- [ ] Improve image processing
+- [ ] Improve digits classification
+- [ ] Write README
