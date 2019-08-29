@@ -44,6 +44,7 @@ class Classifier():
         return blanks
 
     def classify_cells(self, cells):
+        cells = cells.reshape(-1,28, 28, 1)
         model = self._get_model()
         classifications = []
         blanks = self._idenitfy_blanks(cells)
