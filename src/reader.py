@@ -73,15 +73,14 @@ class ImageReader():
         mapped_img = cv2.getPerspectiveTransform(coords, mapping)
         warped_img = cv2.warpPerspective(input_image, mapped_img, (max_width, max_heigth))
         warped_gray = cv2.cvtColor(warped_img, cv2.COLOR_RGB2GRAY)
-        warped_gray = cv2.bitwise_not(warped_gray)
         warped_bw = cv2.adaptiveThreshold(warped_gray,
                                         255,
-                                        cv2.ADAPTIVE_THRESH_MEAN_C,
-                                        cv2.THRESH_BINARY,
-                                        15,
-                                        -2)
+                                        cv2.ADAPTIVE_THRESH_GAUSSIAN_C,
+                                        cv2.THRESH_BINARY_INV,
+                                        101,
+                                        1)
 
-        return warped_bw
+        return  warped_bw
 
     def _remove_grid(self, image):
         horizontal = image.copy()
@@ -102,8 +101,7 @@ class ImageReader():
         cleaned = image - horizontal
         cleaned = cleaned - vertical
 
-        cleaned = cv2.fastNlMeansDenoising(cleaned, None, 40, 40)
-        cleaned = cv2.blur(cleaned, (2, 2))
+        cleaned = cv2.fastNlMeansDenoising(cleaned, None, 30, 30)
 
         return cleaned
 
@@ -122,7 +120,7 @@ class ImageReader():
 
         return cells
 
-    def extract_board_cells(self, image_path):
+    def extract_board_cells(self, image_path, test=False):
         input_image = self._load_image(image_path)
         preprocessed_image = self._preprocess_input(input_image)
         board_contour = self._find_board_contour(preprocessed_image)
@@ -130,6 +128,9 @@ class ImageReader():
         board_coords = self._calculate_board_coords(board_contour, original_ratio)
         board_image = self._extract_board(board_coords, input_image)
         board_cleaned = self._remove_grid(board_image)
-        cells = self._split_to_cells(board_cleaned)
-        cells = np.array(cells)
-        return cells
+        if test:
+            return board_cleaned
+        else:
+            cells = self._split_to_cells(board_cleaned)
+            cells = np.array(cells)
+            return cells
