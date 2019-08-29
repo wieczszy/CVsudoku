@@ -27,7 +27,7 @@ def test_digit_recognition(file_path, model_path):
     cells = reader.extract_board_cells(file_path)
     print(len(cells))
 
-    classifier = Classifier(model_path))
+    classifier = Classifier(model_path)
     classifications = np.array(classifier.classify_cells(cells)).reshape((9,9))
     print('\n')
     print(classifications)
@@ -41,10 +41,10 @@ def test_cells(file_path):
 
 
 if __name__ == '__main__':
-    test_file = '../data/test/sudoku001.jpg'
+    test_file = '../data/test/sudoku002.jpg'
     model_path = 'models/model_fnt_2.hd5'
 
-    # test_solving(test_file, model_path)
+    test_solving(test_file, model_path)
     # test_gird_localization(test_file)
     # test_digit_recognition(test_file, model_path)
     # test_cells(test_file)
