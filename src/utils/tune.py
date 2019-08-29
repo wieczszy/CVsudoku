@@ -1,13 +1,15 @@
 import keras
+import numpy as np
 from keras.models import Sequential
 from keras.layers import Dense, Dropout, Flatten
 from keras.layers import Conv2D, MaxPooling2D
 from keras import backend as K
 from keras.preprocessing.image import ImageDataGenerator
+from sklearn.metrics import classification_report, confusion_matrix
 
 input_shape = (28,28,1)
 num_classes = 10
-images_directory = '../../data/new_fnt'
+images_directory = '../../data/sudoku_set'
 
 model = Sequential()
 model.add(Conv2D(32, kernel_size=(3, 3),
@@ -21,7 +23,7 @@ model.add(Dense(128, activation='relu'))
 model.add(Dropout(0.5))
 model.add(Dense(num_classes, activation='softmax'))
 
-model.load_weights('../models/model.h5')
+model.load_weights('../models/model_fnt_2.hd5')
 
 model.compile(loss=keras.losses.categorical_crossentropy,
               optimizer=keras.optimizers.Adam(lr=0.0003),
@@ -47,14 +49,23 @@ validation_generator = datagen.flow_from_directory(
                                 subset='validation',
                                 shuffle=True)
 
-
-checkpoint_name = '../models/model_fnt_2.hd5'
+checkpoint_name = '../models/model_fnt_3.hd5'
 checkpoint  = keras.callbacks.ModelCheckpoint(checkpoint_name, 
                                               monitor='val_acc',
                                               save_best_only=True,
                                               verbose=1)
 
+
 model.fit_generator(train_generator,
-                    epochs=10,
+                    epochs=15,
                     validation_data=validation_generator,
                     callbacks=[checkpoint])
+
+#Confution Matrix and Classification Report
+Y_pred = model.predict_generator(validation_generator, 225 // 32+1)
+y_pred = np.argmax(Y_pred, axis=1)
+print('Confusion Matrix')
+print(confusion_matrix(validation_generator.classes, y_pred))
+print('Classification Report')
+target_names = [str(i) for i in range(10)]
+print(classification_report(validation_generator.classes, y_pred, target_names=target_names))
