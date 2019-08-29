@@ -4,6 +4,8 @@ bin/
 include/
 lib/
 *.pyc
-*.h5
 share/
 /data/*
+*.h5
+*.hd5
+*.hdf5
