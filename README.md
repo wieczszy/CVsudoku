@@ -1,5 +1,7 @@
 # CVsudoku
 
+
+
 TODO:
 - [x] Extract the sudoku board from the image
 - [x] Remove grid lines from the image
@@ -11,4 +13,4 @@ TODO:
 - [ ] Improve digits classification
 - [ ] Add 'exe' file
 - [ ] Write README
-- [ ] Add LICENCE
+- [x] Add LICENCE
