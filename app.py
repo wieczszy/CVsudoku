@@ -1,5 +1,6 @@
 import cv2
 import numpy as np
+import logging
 from argparse import ArgumentParser
 from src.classifier import Classifier
 from src.reader import ImageReader
@@ -16,12 +17,27 @@ if __name__ == "__main__":
     model_path = args.weights
 
     reader = ImageReader()
-    cells = reader.extract_board_cells(file_path)
+    
+    try:
+        cells = reader.extract_board_cells(file_path)
+    except AttributeError:
+        print()
+        logging.error('\nThe image has not been read correctly - file not found!\n')
+        exit(0)    
 
-    classifier = Classifier(model_path)
-    classifications = classifier.classify_cells(cells)
-    classifications = [str(c) for c in classifications]
-    grid = ''.join(classifications)
+    try:
+        classifier = Classifier(model_path)
+        classifications = classifier.classify_cells(cells)
+        classifications = [str(c) for c in classifications]
+        grid = ''.join(classifications)
+    except OSError:
+        logging.error('\nThe model weights have not been loaded - file not found!\n')
+        exit(0)
 
     solver = SudokuSolver()
-    solver.solve(grid)
+
+    try:
+        solver.solve(grid)
+    except TypeError:
+        logging.error('The image has not been read correctly - solution not found!\n')
+        exit(0)
