@@ -29,6 +29,10 @@ model.add(Dense(128, activation='relu'))
 model.add(Dropout(0.5))
 model.add(Dense(num_classes, activation='softmax'))
 ```
+
+## Accuracy
+Right now it works well with good quality sudoku images but sometimes struggles without a clear reason. Not really usefull for low quality IRL images. Image processing and digit recognition are being worked on - maybe it will be improved maybe not. 
+
 ## Notes to self
 TODO:
 - [x] Extract the sudoku board from the image
