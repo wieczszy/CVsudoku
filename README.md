@@ -6,7 +6,7 @@ Digits are recognized with a simple CNN implemented in `keras` and trained on cu
 ![example](https://i.imgur.com/1oJZ3HN.png)
 
 ## Usage
-Clone the repo: `git clone https://github.com/fivtyen/CVsudoku.git`
+Clone the repo: `git clone https://github.com/wieczszy/CVsudoku.git`
 
 Install requirements: `pip install -r requirements.txt`
 
