@@ -4,7 +4,6 @@ from keras.layers import Dense, Dropout, Flatten
 from keras.layers import Conv2D, MaxPooling2D
 from keras import backend as K
 from keras.models import load_model
-from reader import ImageReader
 import cv2
 import numpy as np
 
