@@ -20,7 +20,7 @@ def test_solving(file_path, model_path):
 def test_gird_localization(file_path):
     reader = ImageReader()
     board = reader.extract_board_cells(file_path, test=True)
-    cv2.imwrite('../data/board_test.png', board)
+    cv2.imwrite('../data/board_test4.png', board)
 
 def test_digit_recognition(file_path, model_path):
     reader = ImageReader()
@@ -41,10 +41,11 @@ def test_cells(file_path):
 
 
 if __name__ == '__main__':
-    test_file = '../data/test/sudoku002.jpg'
-    model_path = 'models/model_fnt_2.hd5'
-
+    test_file = '../data//sudoku_1.png'
+    model_path = 'models/model_fnt_3.hd5'
+    
     test_solving(test_file, model_path)
     # test_gird_localization(test_file)
-    # test_digit_recognition(test_file, model_path)
+#     test_digit_recognition(test_file, model_path)
     # test_cells(test_file)
+        
